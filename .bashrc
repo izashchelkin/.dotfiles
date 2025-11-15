@@ -47,7 +47,8 @@ export BROWSER=firefox
 export EDITOR=nvim
 export VIEW=nvim
 
-export PATH=$PATH:$HOME/Applications/git-cola-4.16.1/bin/
+export PATH=$PATH:$HOME/Applications/git-cola/bin/
+export PATH=$PATH:$HOME/Applications/vscode/bin/
 
 export GOPATH=~/go
 export PATH=$PATH:$GOPATH/bin
