@@ -41,6 +41,7 @@ export MAKEFLAGS=-j8
 #export CXXFLAGS="${CFLAGS}"
 #export RUSTFLAGS="-C opt-level=2 -C target-cpu=native"
 #export LDFLAGS="-fuse-ld=gold"
+export CMAKE_GENERATOR=Ninja
 
 export _JAVA_AWT_WM_NONREPARENTING=1
 export BROWSER=firefox

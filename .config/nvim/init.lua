@@ -36,38 +36,62 @@ keymap.set("n", "}", "}zz")
 
 keymap.set("n", "<leader>-", ":Oil<CR>")
 
+vim.lsp.set_log_level("off")
+-- vim.lsp.set_log_level("debug")
+
+vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged" }, {
+  pattern = "*",
+  callback = function(ev)
+    local ft = vim.bo[ev.buf].filetype
+
+    local blacklist = {
+      oil = true,
+      terminal = true,
+      ["neo-tree"] = true,
+      ["TelescopePrompt"] = true,
+    }
+
+    if blacklist[ft] then
+      return
+    end
+
+    vim.cmd("silent! wall")
+  end,
+  nested = true,
+})
+
 local term_job_id;
 local term_win;
 
 keymap.set("n", "<leader>st", function()
-    vim.cmd.vnew()
-    term_win = vim.api.nvim_get_current_win()
-    term_job_id = vim.fn.jobstart(vim.o.shell, { term = true })
-    vim.cmd.wincmd("J")
-    vim.api.nvim_win_set_height(0, 15)
+  vim.cmd.vnew()
+  term_win = vim.api.nvim_get_current_win()
+  term_job_id = vim.fn.jobstart(vim.o.shell, { term = true })
+  vim.cmd.wincmd("J")
+  vim.api.nvim_win_set_height(0, 15)
 end)
 
 keymap.set("n", "<leader>rt", function()
-    vim.api.nvim_chan_send(term_job_id, "\027[A")
-    vim.api.nvim_chan_send(term_job_id, "\r")
-    vim.api.nvim_win_call(term_win, function()
-        vim.cmd("normal! G")
-    end)
+  vim.api.nvim_chan_send(term_job_id, "\027[A")
+  vim.api.nvim_chan_send(term_job_id, "\r")
+  vim.api.nvim_win_call(term_win, function()
+    vim.cmd("normal! G")
+  end)
 end)
 
 vim.api.nvim_create_autocmd("TermOpen", {
-    group = vim.api.nvim_create_augroup("custom-term-open", { clear = true }),
-    callback = function()
-        vim.opt.number = false
-        vim.opt.relativenumber = false
-    end
+  group = vim.api.nvim_create_augroup("custom-term-open", { clear = true }),
+  callback = function()
+    vim.opt.number = false
+    vim.opt.relativenumber = false
+  end
 })
 
 vim.api.nvim_create_autocmd("TextYankPost", {
-    group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
-    callback = function()
-        vim.highlight.on_yank()
-    end
+  group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
+  callback = function()
+    vim.highlight.on_yank()
+  end
 })
 
 -- https://github.com/justinmk/config/blob/master/.config/nvim/lua/my/keymaps.lua
