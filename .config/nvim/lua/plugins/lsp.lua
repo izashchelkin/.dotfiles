@@ -8,10 +8,10 @@ return {
         ft = "lua",
         opts = {
           library = {
-            { path = "${3rd}/luv/library", words = { "vim%.uv" } }
-          }
-        }
-      }
+            { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+          },
+        },
+      },
     },
     opts = {
       servers = {
@@ -19,7 +19,7 @@ return {
         lua_ls = {},
         clangd = {
           root_dir = function(fname)
-            return require("lspconfig.util").root_pattern(
+            return vim.fs.root(fname, {
               "compile_commands.json",
               "compile_flags.txt",
               ".git",
@@ -29,20 +29,17 @@ return {
               "config.h.in",
               "meson.build",
               "meson_options.txt",
-              "build.ninja"
-            )(fname)
+              "build.ninja",
+            })
           end,
           cmd = {
-            -- "/home/izashchelkin/scylladev/scylladb/tools/toolchain/dbuild",
             "clangd",
             "--pretty",
             "--background-index",
             "--clang-tidy",
-            -- "--header-insertion=never",
             "--header-insertion=iwyu",
             "--completion-style=detailed",
             "--fallback-style=none",
-            -- "--function-arg-placeholders",
           },
           init_options = {
             usePlaceholders = true,
@@ -50,14 +47,17 @@ return {
             clangdFileStatus = true,
           },
         },
-      }
+      },
     },
+
     config = function(_, opts)
-      local lspconfig = require("lspconfig")
       for server, config in pairs(opts.servers) do
-        config.capabilities = require "blink.cmp".get_lsp_capabilities(config.capabilities)
-        lspconfig[server].setup(config)
+        config.capabilities =
+          require("blink.cmp").get_lsp_capabilities(config.capabilities)
+
+        vim.lsp.config(server, config)
+        vim.lsp.enable(server)
       end
     end,
-  }
+  },
 }
