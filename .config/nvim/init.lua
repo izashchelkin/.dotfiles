@@ -13,13 +13,43 @@ opt.guicursor = ""
 vim.cmd("set cinoptions+=l1")
 vim.cmd("set nowrap")
 
+local function switch_source_header()
+  local file = vim.api.nvim_buf_get_name(0)
+  if file == "" then return end
+
+  local dir  = vim.fn.fnamemodify(file, ":h")
+  local base = vim.fn.fnamemodify(file, ":t:r")
+  local ext  = vim.fn.fnamemodify(file, ":e"):lower()
+
+  local headers = { "h", "hh", "hpp", "hxx", "inl" }
+  local sources = { "c", "cc", "cpp", "cxx", "m", "mm" } -- include ObjC/ObjC++ if you ever need it
+
+  local candidates
+  if vim.tbl_contains(headers, ext) then
+    candidates = sources
+  else
+    candidates = headers
+  end
+
+  for _, e in ipairs(candidates) do
+    local cand = dir .. "/" .. base .. "." .. e
+    if vim.fn.filereadable(cand) == 1 then
+      vim.cmd.edit(vim.fn.fnameescape(cand))
+      return
+    end
+  end
+
+  vim.notify(("No counterpart found for %s.%s in %s"):format(base, ext, dir), vim.log.levels.WARN)
+end
+vim.keymap.set("n", "<leader>ch", switch_source_header, { desc = "Switch source/header (no LSP)" })
+
 local keymap = vim.keymap
 
 keymap.set("n", "<M-j>", "<cmd>cnext<CR>")
 keymap.set("n", "<M-k>", "<cmd>cprev<CR>")
 keymap.set("n", "<esc>", ":noh<CR>")
 keymap.set("n", "<leader><leader>f", function() vim.lsp.buf.format() end)
-keymap.set("n", "<leader>ch", "<cmd>ClangdSwitchSourceHeader<cr>");
+-- keymap.set("n", "<leader>ch", "<cmd>ClangdSwitchSourceHeader<cr>");
 keymap.set("n", "<leader>x", ":.lua<CR>")
 
 -- keymap.set("n", "<leader>f", ":lua vim.diagnostic.open_float()<CR>")

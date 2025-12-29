@@ -1,6 +1,7 @@
 return {
   {
     "neovim/nvim-lspconfig",
+    enabled = false,
     dependencies = {
       "saghen/blink.cmp",
       {
