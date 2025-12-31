@@ -10,6 +10,12 @@ opt.ignorecase = true
 opt.smartcase = true
 opt.guicursor = ""
 
+vim.opt.shellpipe = ">%s 2>&1"
+vim.opt.shellredir = ">%s 2>&1"
+
+vim.opt.grepprg = "rg --vimgrep --smart-case"
+vim.opt.grepformat = "%f:%l:%c:%m"
+
 vim.cmd("set cinoptions+=l1")
 vim.cmd("set nowrap")
 
@@ -22,7 +28,7 @@ local function switch_source_header()
   local ext  = vim.fn.fnamemodify(file, ":e"):lower()
 
   local headers = { "h", "hh", "hpp", "hxx", "inl" }
-  local sources = { "c", "cc", "cpp", "cxx", "m", "mm" } -- include ObjC/ObjC++ if you ever need it
+  local sources = { "c", "cc", "cpp", "cxx", "m", "mm" }
 
   local candidates
   if vim.tbl_contains(headers, ext) then
@@ -48,7 +54,19 @@ local keymap = vim.keymap
 keymap.set("n", "<M-j>", "<cmd>cnext<CR>")
 keymap.set("n", "<M-k>", "<cmd>cprev<CR>")
 keymap.set("n", "<esc>", ":noh<CR>")
-keymap.set("n", "<leader><leader>f", function() vim.lsp.buf.format() end)
+
+keymap.set("n", "<leader><leader>f", function()
+  local view = vim.fn.winsaveview()
+  vim.cmd("%!clang-format")
+  vim.fn.winrestview(view)
+end, { desc = "Format buffer with clang-format" })
+
+-- vim.keymap.set("v", "<leader><leader>f", function()
+--   local view = vim.fn.winsaveview()
+--   vim.cmd("'<,'>!clang-format")
+--   vim.fn.winrestview(view)
+-- end, { desc = "Format selection with clang-format" })
+
 -- keymap.set("n", "<leader>ch", "<cmd>ClangdSwitchSourceHeader<cr>");
 keymap.set("n", "<leader>x", ":.lua<CR>")
 
@@ -63,6 +81,9 @@ keymap.set("n", "n", "nzz")
 keymap.set("n", "N", "Nzz")
 keymap.set("n", "{", "{zz")
 keymap.set("n", "}", "}zz")
+
+keymap.set("n", "*", "*N")
+-- keymap.set("v", "*", "*N") TODO: how to do this?
 
 keymap.set("n", "<leader>-", ":Oil<CR>")
 
@@ -90,32 +111,32 @@ vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged" }, {
   nested = true,
 })
 
-local term_job_id;
-local term_win;
-
-keymap.set("n", "<leader>st", function()
-  vim.cmd.vnew()
-  term_win = vim.api.nvim_get_current_win()
-  term_job_id = vim.fn.jobstart(vim.o.shell, { term = true })
-  vim.cmd.wincmd("J")
-  vim.api.nvim_win_set_height(0, 15)
-end)
-
-keymap.set("n", "<leader>rt", function()
-  vim.api.nvim_chan_send(term_job_id, "\027[A")
-  vim.api.nvim_chan_send(term_job_id, "\r")
-  vim.api.nvim_win_call(term_win, function()
-    vim.cmd("normal! G")
-  end)
-end)
-
-vim.api.nvim_create_autocmd("TermOpen", {
-  group = vim.api.nvim_create_augroup("custom-term-open", { clear = true }),
-  callback = function()
-    vim.opt.number = false
-    vim.opt.relativenumber = false
-  end
-})
+-- local term_job_id;
+-- local term_win;
+--
+-- keymap.set("n", "<leader>st", function()
+--   vim.cmd.vnew()
+--   term_win = vim.api.nvim_get_current_win()
+--   term_job_id = vim.fn.jobstart(vim.o.shell, { term = true })
+--   vim.cmd.wincmd("J")
+--   vim.api.nvim_win_set_height(0, 15)
+-- end)
+--
+-- keymap.set("n", "<leader>rt", function()
+--   vim.api.nvim_chan_send(term_job_id, "\027[A")
+--   vim.api.nvim_chan_send(term_job_id, "\r")
+--   vim.api.nvim_win_call(term_win, function()
+--     vim.cmd("normal! G")
+--   end)
+-- end)
+--
+-- vim.api.nvim_create_autocmd("TermOpen", {
+--   group = vim.api.nvim_create_augroup("custom-term-open", { clear = true }),
+--   callback = function()
+--     vim.opt.number = false
+--     vim.opt.relativenumber = false
+--   end
+-- })
 
 vim.api.nvim_create_autocmd("TextYankPost", {
   group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
@@ -135,3 +156,5 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 --     vim.fn.getregion(vim.fn.getpos('.'), vim.fn.getpos('v'), { type=vim.fn.mode() }), ' '))))
 --   vim.api.nvim_input('<esc>')
 -- end)
+
+require "buildutils"

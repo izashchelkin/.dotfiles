@@ -6,7 +6,6 @@
   "habamax.nvim": { "branch": "master", "commit": "4a4105aea429fca3cb5ebcca584e21b9af2ae265" },
   "hardtime.nvim": { "branch": "main", "commit": "b4e431934af1fe224a3a801f632c008278cb7628" },
   "lazy.nvim": { "branch": "main", "commit": "306a05526ada86a7b30af95c5cc81ffba93fef97" },
-  "lazydev.nvim": { "branch": "main", "commit": "5231c62aa83c2f8dc8e7ba957aa77098cda1257d" },
   "lush.nvim": { "branch": "main", "commit": "9c60ec2279d62487d942ce095e49006af28eed6e" },
   "mini.icons": { "branch": "main", "commit": "ff2e4f1d29f659cc2bad0f9256f2f6195c6b2428" },
   "mini.nvim": { "branch": "main", "commit": "e7a8e5a0920df1435172d42fb32e474bbb30d021" },
@@ -19,5 +18,6 @@
   "smear-cursor.nvim": { "branch": "main", "commit": "69b2d4aa715dc2ead1aa772e19bc241b561a68fa" },
   "telescope-fzf-native.nvim": { "branch": "main", "commit": "6fea601bd2b694c6f2ae08a6c6fab14930c60e2c" },
   "telescope.nvim": { "branch": "master", "commit": "4d0f5e0e7f69071e315515c385fab2a4eff07b3d" },
-  "typescript-tools.nvim": { "branch": "master", "commit": "c2f5910074103705661e9651aa841e0d7eea9932" }
+  "typescript-tools.nvim": { "branch": "master", "commit": "c2f5910074103705661e9651aa841e0d7eea9932" },
+  "vim-gutentags": { "branch": "master", "commit": "aa47c5e29c37c52176c44e61c780032dfacef3dd" }
 }
