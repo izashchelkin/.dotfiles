@@ -161,8 +161,8 @@ vim.api.nvim_create_user_command("Build", function(opts)
   append_lines(bufnr, { ("== Build: dir=%s target=%s =="):format(dir, target) })
 
   vim.fn.jobstart({ "cmake", "--build", dir, "--target", target }, {
-    stdout_buffered = true,
-    stderr_buffered = true,
+    stdout_buffered = false,
+    stderr_buffered = false,
     on_stdout = function(_, data) append_lines(bufnr, data) end,
     on_stderr = function(_, data) append_lines(bufnr, data) end,
     on_exit = function(_, code)
