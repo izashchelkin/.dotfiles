@@ -9,12 +9,15 @@ opt.clipboard = "unnamedplus"
 opt.ignorecase = true
 opt.smartcase = true
 opt.guicursor = ""
+opt.cursorline = true
 
-vim.opt.shellpipe = ">%s 2>&1"
-vim.opt.shellredir = ">%s 2>&1"
+-- vim.cmd("highlight CursorLine gui=bold cterm=bold")
 
-vim.opt.grepprg = "rg --vimgrep --smart-case"
-vim.opt.grepformat = "%f:%l:%c:%m"
+opt.shellpipe = ">%s 2>&1"
+opt.shellredir = ">%s 2>&1"
+
+opt.grepprg = "rg --vimgrep --smart-case"
+opt.grepformat = "%f:%l:%c:%m"
 
 vim.cmd("set cinoptions+=l1")
 vim.cmd("set nowrap")
@@ -235,3 +238,8 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 
 require "buildutils"
 require "highlight"
+require "navigation"
+
+
+vim.cmd("vnew") --- TODO: detect if file was specified via stdin and not do this
+
