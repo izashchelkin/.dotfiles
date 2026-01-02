@@ -8,10 +8,12 @@ xrandr --output 'HDMI-0' --mode 2560x1440 --output 'DP-2' --off
 dunst &
 redshift -l 49:8 &
 
+~/wm_overlay &
+
 while true; do 
 	umount ~/wm-debugfs
 	if ! ~/wm 2&> ~/nylalog; then
-		break
+		continue
 	fi
 done
 
