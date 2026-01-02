@@ -5,6 +5,16 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+export HISTSIZE=50000
+export HISTFILESIZE=100000
+
+shopt -s histappend
+
+PROMPT_COMMAND='history -a; history -n'
+
+export HISTCONTROL=ignoreboth:erasedups
+export HISTTIMEFORMAT='%F %T  '
+
 pushd() {
   command pushd "$@" >/dev/null
 }
