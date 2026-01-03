@@ -85,19 +85,6 @@ local function get_build_buf()
   return b
 end
 
-local function ensure_buf_visible(bufnr)
-  -- If it's already in a window somewhere, do nothing
-  if vim.fn.bufwinnr(bufnr) ~= -1 then
-    return
-  end
-
-  -- Open it in a split but don't steal focus
-  -- local curwin = vim.api.nvim_get_current_win()
-  -- vim.cmd("botright split")
-  -- vim.api.nvim_win_set_buf(0, bufnr)
-  -- vim.api.nvim_set_current_win(curwin)
-end
-
 local function clear_buf(bufnr)
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {})
 end
@@ -114,6 +101,11 @@ local function append_lines(bufnr, lines)
   end)
 end
 
+-- Populate quickfix, but:
+-- - do NOT open it
+-- - do NOT jump/change current quickfix selection
+-- - if qf window is open, keep its view (cursor/scroll) stable
+-- - avoid redraw/flicker when content didn't change
 local function set_qf_from_buf(bufnr)
   local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
   lines = normalize_lines(lines)
@@ -122,11 +114,56 @@ local function set_qf_from_buf(bufnr)
   local efm = is_windows and efm_msvc or efm_clang
   local title = is_windows and "Build (MSVC) errors" or "Build (Clang/GCC) errors"
 
-  vim.fn.setqflist({}, " ", { title = title, lines = lines, efm = efm })
+  -- No-op if nothing changed (prevents pointless redraws)
+  local sig = table.concat(lines, "\n")
+  if vim.g.build_qf_sig == sig then
+    return
+  end
+  vim.g.build_qf_sig = sig
 
-  if #vim.fn.getqflist() > 0 then
-    vim.cmd("copen")
-  else
+  -- Capture quickfix window state (if open)
+  local qfinfo = vim.fn.getqflist({ winid = 0, idx = 0 })
+  local qf_winid = qfinfo.winid
+  local old_idx = qfinfo.idx
+
+  local qf_view, qf_height
+  if qf_winid ~= 0 and vim.api.nvim_win_is_valid(qf_winid) then
+    qf_height = vim.api.nvim_win_get_height(qf_winid)
+    qf_view = vim.api.nvim_win_call(qf_winid, function()
+      return vim.fn.winsaveview()
+    end)
+
+    -- Close silently without moving focus
+    vim.api.nvim_win_call(qf_winid, function()
+      vim.cmd("silent! cclose")
+    end)
+  end
+
+  -- Update quickfix list (no window exists now, so no resize/flicker)
+  vim.fn.setqflist({}, "r", {
+    title = title,
+    lines = lines,
+    efm = efm,
+  })
+
+  -- Restore selection
+  if old_idx and old_idx > 0 then
+    vim.fn.setqflist({}, "a", { idx = old_idx })
+  end
+
+  -- Reopen quickfix exactly as it was
+  if qf_height then
+    vim.cmd("silent! botright copen " .. qf_height)
+
+    local new_qfinfo = vim.fn.getqflist({ winid = 0 })
+    if new_qfinfo.winid ~= 0 and qf_view then
+      vim.api.nvim_win_call(new_qfinfo.winid, function()
+        vim.fn.winrestview(qf_view)
+      end)
+    end
+  end
+
+  if #vim.fn.getqflist() == 0 then
     vim.notify("BuildQf: no errors parsed.")
   end
 end
@@ -156,7 +193,6 @@ vim.api.nvim_create_user_command("Build", function(opts)
   end
 
   local bufnr = get_build_buf()
-  ensure_buf_visible(bufnr)
   clear_buf(bufnr)
   append_lines(bufnr, { ("== Build: dir=%s target=%s =="):format(dir, target) })
 
@@ -188,3 +224,5 @@ end, { silent = true })
 vim.keymap.set("n", "<F6>", function()
   vim.cmd("BuildQf")
 end, { silent = true })
+
+return M
