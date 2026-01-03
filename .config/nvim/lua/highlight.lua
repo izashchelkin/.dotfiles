@@ -13,14 +13,22 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
-vim.api.nvim_set_hl(0, "Search",    { fg = "#98c379", bg = "NONE", underline = true })
-vim.api.nvim_set_hl(0, "IncSearch", { fg = "#98c379", bg = "NONE", underline = true })
-vim.api.nvim_set_hl(0, "CurSearch", { fg = "#98c379", bg = "NONE", underline = true })
+local lemonColor="#fdff00"
+local searchStyle = {
+  fg = lemonColor,
+  bg = "NONE",
+  underline = true,
+  bold = true,
+}
+
+vim.api.nvim_set_hl(0, "Search",    searchStyle)
+vim.api.nvim_set_hl(0, "IncSearch", searchStyle)
+vim.api.nvim_set_hl(0, "CurSearch", searchStyle)
 
 vim.api.nvim_create_autocmd("ColorScheme", {
   callback = function()
-    vim.api.nvim_set_hl(0, "Search",    { fg = "#98c379", bg = "NONE", underline = true })
-    vim.api.nvim_set_hl(0, "IncSearch", { fg = "#98c379", bg = "NONE", underline = true })
-    vim.api.nvim_set_hl(0, "CurSearch", { fg = "#98c379", bg = "NONE", underline = true })
+    vim.api.nvim_set_hl(0, "Search",    searchStyle)
+    vim.api.nvim_set_hl(0, "IncSearch", searchStyle)
+    vim.api.nvim_set_hl(0, "CurSearch", searchStyle)
   end,
 })

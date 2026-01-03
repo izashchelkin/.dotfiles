@@ -166,7 +166,7 @@ vim.api.nvim_create_user_command("Build", function(opts)
     on_stdout = function(_, data) append_lines(bufnr, data) end,
     on_stderr = function(_, data) append_lines(bufnr, data) end,
     on_exit = function(_, code)
-      append_lines(bufnr, { ("== Build finished (exit %d) =="):format(code) })
+      vim.notify(("== Build finished (exit %d) =="):format(code), vim.log.levels.INFO)
     end,
   })
 end, { nargs = "*", complete = "file" })
