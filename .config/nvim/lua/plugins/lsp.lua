@@ -1,7 +1,7 @@
 return {
   {
     "neovim/nvim-lspconfig",
-    enabled = false,
+    enabled = true,
     dependencies = {
       "saghen/blink.cmp",
       {
@@ -14,25 +14,12 @@ return {
         },
       },
     },
+
     opts = {
       servers = {
         -- ruff = {},
-        lua_ls = {},
+        -- lua_ls = {},
         clangd = {
-          root_dir = function(fname)
-            return vim.fs.root(fname, {
-              "compile_commands.json",
-              "compile_flags.txt",
-              ".git",
-              "Makefile",
-              "configure.ac",
-              "configure.in",
-              "config.h.in",
-              "meson.build",
-              "meson_options.txt",
-              "build.ninja",
-            })
-          end,
           cmd = {
             "clangd",
             "--pretty",
@@ -42,9 +29,10 @@ return {
             "--completion-style=detailed",
             "--fallback-style=none",
           },
+          root_markers = { "compile_commands.json", ".git" },
           init_options = {
             usePlaceholders = true,
-            completeUnimported = true,
+            completeUnimported = false,
             clangdFileStatus = true,
           },
         },
@@ -59,6 +47,8 @@ return {
         vim.lsp.config(server, config)
         vim.lsp.enable(server)
       end
+
+      vim.lsp.set_log_level("debug")
     end,
   },
 }

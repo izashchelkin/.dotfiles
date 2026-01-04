@@ -25,17 +25,6 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "BufWinEnter", "WinEnter" }, {
-  callback = function()
-    if vim.bo.buftype ~= "quickfix" then return end
-    vim.schedule(function()
-      -- move the *current* window (the qf window) to bottom, full width
-      vim.cmd("wincmd J")
-      vim.cmd("resize 12")
-    end)
-  end,
-})
-
 local cmd = vim.cmd
 
 cmd("set cinoptions+=l1")

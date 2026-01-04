@@ -45,9 +45,9 @@ keymap.set("n", "<esc>", ":noh<CR>")
 
 keymap.set("n", "<leader><leader>f", function()
   local view = vim.fn.winsaveview()
-  vim.cmd("%!clang-format")
+  vim.lsp.buf.format({ async = false, timeout_ms = 3000 })
   vim.fn.winrestview(view)
-end, { desc = "Format buffer with clang-format" })
+end, { desc = "Format buffer with LSP" })
 
 keymap.set("n", "<leader>x", ":.lua<CR>")
 keymap.set("n", "<leader><leader>x", "<cmd>source %<CR>")
