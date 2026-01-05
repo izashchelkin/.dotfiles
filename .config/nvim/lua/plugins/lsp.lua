@@ -22,8 +22,8 @@ return {
         clangd = {
           cmd = {
             "clangd",
-            "--pretty",
             "--background-index",
+            "--pretty",
             "--clang-tidy",
             "--header-insertion=iwyu",
             "--completion-style=detailed",
@@ -48,7 +48,7 @@ return {
         vim.lsp.enable(server)
       end
 
-      vim.lsp.set_log_level("debug")
+      vim.lsp.set_log_level("error")
     end,
   },
 }
