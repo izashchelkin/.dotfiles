@@ -22,7 +22,7 @@ return {
         clangd = {
           cmd = {
             "clangd",
-            "--background-index",
+            "--background-index=0",
             "--pretty",
             "--clang-tidy",
             "--header-insertion=iwyu",
@@ -32,7 +32,7 @@ return {
           root_markers = { "compile_commands.json", ".git" },
           init_options = {
             usePlaceholders = true,
-            completeUnimported = false,
+            completeUnimported = true,
             clangdFileStatus = true,
           },
         },

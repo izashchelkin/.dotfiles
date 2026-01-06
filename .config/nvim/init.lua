@@ -17,13 +17,7 @@ opt.grepformat = "%f:%l:%c:%m"
 
 vim.o.splitbelow = true
 vim.o.splitright = true
-
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "qf",
-  callback = function()
-    vim.cmd("botright resize 10")
-  end,
-})
+vim.o.smoothscroll = false
 
 local cmd = vim.cmd
 

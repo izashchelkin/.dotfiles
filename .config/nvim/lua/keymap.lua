@@ -53,17 +53,61 @@ keymap.set("n", "<leader>x", ":.lua<CR>")
 keymap.set("n", "<leader><leader>x", "<cmd>source %<CR>")
 keymap.set("v", "<leader>x", ":lua<CR>")
 
+-- full-page moves + center
+-- keymap.set("n", "<C-f>", function() feed("<C-f>zz") end, { silent = true })
+-- keymap.set("n", "<C-b>", function() feed("<C-b>zz") end, { silent = true })
 -- half-page moves + center
-keymap.set("n", "<C-d>", function() feed("<C-d>zz") end, { silent = true })
-keymap.set("n", "<C-u>", function() feed("<C-u>zz") end, { silent = true })
+-- keymap.set("n", "<C-d>", function() feed("<C-d>zz") end, { silent = true })
+-- keymap.set("n", "<C-u>", function() feed("<C-u>zz") end, { silent = true })
+
+local function move_by_screen_lines_center(dir, lines_fn)
+  return function()
+    local win = 0
+    local height = vim.api.nvim_win_get_height(win)
+
+    local lines = lines_fn(height)
+    if lines < 1 then lines = 1 end
+
+    local cur = vim.api.nvim_win_get_cursor(win)
+    local lnum, col = cur[1], cur[2]
+    local last = vim.api.nvim_buf_line_count(0)
+
+    local target = lnum + dir * lines
+    if target < 1 then target = 1 end
+    if target > last then target = last end
+
+    local center_offset = math.floor(height / 2)
+    local topline = target - center_offset
+
+    local max_topline = math.max(1, last - height + 1)
+    if topline < 1 then topline = 1 end
+    if topline > max_topline then topline = max_topline end
+
+    local view = vim.fn.winsaveview()
+    view.lnum = target
+    view.col = col
+    view.topline = topline
+
+    local old_lazy = vim.o.lazyredraw
+    vim.o.lazyredraw = true
+    vim.fn.winrestview(view)
+    vim.o.lazyredraw = old_lazy
+  end
+end
+
+local half = function(h) return math.floor(h / 2) end
+local full = function(h) return h end
+
+vim.keymap.set("n", "<C-d>", move_by_screen_lines_center( 1, half), { silent = true })
+vim.keymap.set("n", "<C-u>", move_by_screen_lines_center(-1, half), { silent = true })
+
+-- pick whatever keys you want for full-page; examples:
+vim.keymap.set("n", "<C-f>", move_by_screen_lines_center( 1, full), { silent = true })
+vim.keymap.set("n", "<C-b>", move_by_screen_lines_center(-1, full), { silent = true })
 
 -- search next/prev + center
 keymap.set("n", "n", function() feed("nzz") end, { silent = true })
 keymap.set("n", "N", function() feed("Nzz") end, { silent = true })
-
--- full-page moves + center
-keymap.set("n", "<C-f>", function() feed("<C-f>zz") end, { silent = true })
-keymap.set("n", "<C-b>", function() feed("<C-b>zz") end, { silent = true })
 
 -- paragraph moves + center
 keymap.set("n", "{", function() feed("{zz") end, { silent = true })
