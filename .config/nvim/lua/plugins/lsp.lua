@@ -22,7 +22,7 @@ return {
         clangd = {
           cmd = {
             "clangd",
-            "--background-index=0",
+            -- "--background-index=false",
             "--pretty",
             "--clang-tidy",
             "--header-insertion=iwyu",
@@ -33,7 +33,7 @@ return {
           init_options = {
             usePlaceholders = true,
             completeUnimported = true,
-            clangdFileStatus = true,
+            clangdFileStatus = false,
           },
         },
       },
@@ -43,6 +43,10 @@ return {
       for server, config in pairs(opts.servers) do
         config.capabilities =
           require("blink.cmp").get_lsp_capabilities(config.capabilities)
+
+        if server == "clangd" and config.capabilities and config.capabilities.textDocument then
+          config.capabilities.textDocument.semanticTokens = nil
+        end
 
         vim.lsp.config(server, config)
         vim.lsp.enable(server)

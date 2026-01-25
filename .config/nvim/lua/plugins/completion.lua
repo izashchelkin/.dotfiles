@@ -2,7 +2,7 @@ return {
   {
     'saghen/blink.cmp',
     enabled = true,
-    dependencies = { 'rafamadriz/friendly-snippets' },
+    -- dependencies = { 'rafamadriz/friendly-snippets' },
     version = '1.*',
     opts = {
       keymap = { preset = 'default' },
