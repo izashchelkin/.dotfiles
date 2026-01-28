@@ -16,4 +16,3 @@ while true; do
 		continue
 	fi
 done
-

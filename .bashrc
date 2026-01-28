@@ -119,8 +119,49 @@ parse_git_branch() {
   git branch 2>/dev/null | /usr/bin/sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
 
-eval "$(pyenv virtualenv-init -)"
-eval "$(pyenv init -)"
+#####
+#####
+#####
+
+PATH="$(bash --norc -ec 'IFS=:; paths=($PATH);
+for i in ${!paths[@]}; do
+if [[ ${paths[i]} == "''/home/izashchelkin/.pyenv/shims''" ]]; then unset '\''paths[i]'\'';
+fi; done;
+echo "${paths[*]}"')"
+export PATH="/home/izashchelkin/.pyenv/shims:${PATH}"
+export PYENV_SHELL=bash
+timeout 1 pyenv rehash
+pyenv() {
+  local command=${1:-}
+  [ "$#" -gt 0 ] && shift
+  case "$command" in
+  activate|deactivate|rehash|shell)
+    eval "$(pyenv "sh-$command" "$@")"
+    ;;
+  *)
+    command pyenv "$command" "$@"
+    ;;
+  esac
+}
+
+export PATH="/home/izashchelkin/.pyenv/plugins/pyenv-virtualenv/shims:${PATH}";
+export PYENV_VIRTUALENV_INIT=1;
+_pyenv_virtualenv_hook() {
+  local ret=$?
+  if [ -n "${VIRTUAL_ENV-}" ]; then
+    eval "$(pyenv sh-activate --quiet || pyenv sh-deactivate --quiet || true)" || true
+  else
+    eval "$(pyenv sh-activate --quiet || true)" || true
+  fi
+  return $ret
+};
+if ! [[ "${PROMPT_COMMAND-}" =~ _pyenv_virtualenv_hook ]]; then
+  PROMPT_COMMAND="_pyenv_virtualenv_hook;${PROMPT_COMMAND-}"
+fi
+
+#####
+#####
+#####
 
 #
 # https://bbs.archlinux.org/viewtopic.php?id=146850
