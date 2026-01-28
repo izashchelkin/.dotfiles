@@ -119,9 +119,9 @@ parse_git_branch() {
   git branch 2>/dev/null | /usr/bin/sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
 
-#####
-#####
-#####
+################
+################
+################
 
 PATH="$(bash --norc -ec 'IFS=:; paths=($PATH);
 for i in ${!paths[@]}; do
@@ -130,8 +130,10 @@ fi; done;
 echo "${paths[*]}"')"
 export PATH="/home/izashchelkin/.pyenv/shims:${PATH}"
 export PYENV_SHELL=bash
-timeout 1 pyenv rehash
+
 pyenv() {
+	command pyenv rehash
+
   local command=${1:-}
   [ "$#" -gt 0 ] && shift
   case "$command" in
@@ -159,9 +161,9 @@ if ! [[ "${PROMPT_COMMAND-}" =~ _pyenv_virtualenv_hook ]]; then
   PROMPT_COMMAND="_pyenv_virtualenv_hook;${PROMPT_COMMAND-}"
 fi
 
-#####
-#####
-#####
+#############
+#############
+#############
 
 #
 # https://bbs.archlinux.org/viewtopic.php?id=146850
