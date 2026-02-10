@@ -10,6 +10,8 @@ redshift -l 49:8 &
 
 ~/wm_overlay &
 
+# ~/wm 2&> ~/nylalog;
+
 while true; do 
 	umount ~/wm-debugfs
 	if ! ~/wm 2&> ~/nylalog; then

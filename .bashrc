@@ -123,16 +123,32 @@ parse_git_branch() {
 ################
 ################
 
-PATH="$(bash --norc -ec 'IFS=:; paths=($PATH);
-for i in ${!paths[@]}; do
-if [[ ${paths[i]} == "''/home/izashchelkin/.pyenv/shims''" ]]; then unset '\''paths[i]'\'';
-fi; done;
-echo "${paths[*]}"')"
-export PATH="/home/izashchelkin/.pyenv/shims:${PATH}"
-export PYENV_SHELL=bash
 
 pyenv() {
-	command pyenv rehash
+	PATH="$(bash --norc -ec 'IFS=:; paths=($PATH);
+	for i in ${!paths[@]}; do
+	if [[ ${paths[i]} == "''/home/izashchelkin/.pyenv/shims''" ]]; then unset '\''paths[i]'\'';
+	fi; done;
+	echo "${paths[*]}"')"
+	export PATH="/home/izashchelkin/.pyenv/shims:${PATH}"
+	export PYENV_SHELL=bash
+
+	export PATH="/home/izashchelkin/.pyenv/plugins/pyenv-virtualenv/shims:${PATH}";
+	export PYENV_VIRTUALENV_INIT=1;
+	_pyenv_virtualenv_hook() {
+		local ret=$?
+		if [ -n "${VIRTUAL_ENV-}" ]; then
+			eval "$(pyenv sh-activate --quiet || pyenv sh-deactivate --quiet || true)" || true
+		else
+			eval "$(pyenv sh-activate --quiet || true)" || true
+		fi
+		return $ret
+	};
+	if ! [[ "${PROMPT_COMMAND-}" =~ _pyenv_virtualenv_hook ]]; then
+		PROMPT_COMMAND="_pyenv_virtualenv_hook;${PROMPT_COMMAND-}"
+	fi
+
+	# command pyenv rehash
 
   local command=${1:-}
   [ "$#" -gt 0 ] && shift
@@ -146,20 +162,6 @@ pyenv() {
   esac
 }
 
-export PATH="/home/izashchelkin/.pyenv/plugins/pyenv-virtualenv/shims:${PATH}";
-export PYENV_VIRTUALENV_INIT=1;
-_pyenv_virtualenv_hook() {
-  local ret=$?
-  if [ -n "${VIRTUAL_ENV-}" ]; then
-    eval "$(pyenv sh-activate --quiet || pyenv sh-deactivate --quiet || true)" || true
-  else
-    eval "$(pyenv sh-activate --quiet || true)" || true
-  fi
-  return $ret
-};
-if ! [[ "${PROMPT_COMMAND-}" =~ _pyenv_virtualenv_hook ]]; then
-  PROMPT_COMMAND="_pyenv_virtualenv_hook;${PROMPT_COMMAND-}"
-fi
 
 #############
 #############
