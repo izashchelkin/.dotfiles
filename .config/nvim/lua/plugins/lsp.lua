@@ -1,7 +1,7 @@
 return {
   {
     "neovim/nvim-lspconfig",
-    enabled = false,
+    enabled = true,
     dependencies = {
       "saghen/blink.cmp",
       {
@@ -23,7 +23,7 @@ return {
           cmd = {
             "clangd",
             -- "--background-index=false",
-            "--pretty",
+            -- "--pretty",
             "--clang-tidy",
             "--header-insertion=iwyu",
             "--completion-style=detailed",
@@ -44,9 +44,9 @@ return {
         config.capabilities =
           require("blink.cmp").get_lsp_capabilities(config.capabilities)
 
-        if server == "clangd" and config.capabilities and config.capabilities.textDocument then
-          config.capabilities.textDocument.semanticTokens = nil
-        end
+        -- if server == "clangd" and config.capabilities and config.capabilities.textDocument then
+        --   config.capabilities.textDocument.semanticTokens = nil
+        -- end
 
         vim.lsp.config(server, config)
         vim.lsp.enable(server)
