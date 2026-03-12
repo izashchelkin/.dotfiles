@@ -71,7 +71,9 @@ export PATH=$PATH:$GOPATH/bin
 export PATH=$PATH:~/localprefix/bin/
 export PREFIX=~/localprefix
 
-source ~/vulkansdk/setup-env.sh
+if [ -e ~/vulkansdk/setup-env.sh ]; then
+    source ~/vulkansdk/setup-env.sh || true
+fi
 
 markdown() {
   pandoc $1 >/tmp/$1.html
