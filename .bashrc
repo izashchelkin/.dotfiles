@@ -61,6 +61,7 @@ export VIEW=nvim
 
 export PATH=$PATH:$HOME/Applications/git-cola/bin/
 export PATH=$PATH:$HOME/Applications/vscode/bin/
+export PATH=$PATH:$HOME/.local/share/JetBrains/Toolbox/scripts/
 
 export GOPATH=~/go
 export PATH=$PATH:$GOPATH/bin

@@ -5,6 +5,9 @@ fi
 xrandr --output 'HDMI-0' --mode 3440x1440 --rate 100 --output 'DP-2' --off ||\
 xrandr --output 'HDMI-0' --mode 2560x1440 --output 'DP-2' --off
 
+#xrandr --output 'HDMI-1-0' --mode 3440x1440 --rate 100 --output 'eDP' --off ||\
+#xrandr --output 'HDMI-1-0' --mode 2560x1440 --output 'eDP' --off
+
 dunst &
 redshift -l 49:8 &
 
