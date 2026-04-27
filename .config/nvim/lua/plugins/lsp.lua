@@ -52,7 +52,7 @@ return {
         vim.lsp.enable(server)
       end
 
-      vim.lsp.log.set_level("error")
+      vim.lsp.log.set_level("off")
     end,
   },
 }

@@ -26,6 +26,7 @@ cmd("set nowrap")
 
 require "filetype"
 require "autocmd"
+require "cmd"
 require "keymap"
 require "buildutils"
 require "highlight"
